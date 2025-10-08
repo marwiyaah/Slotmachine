@@ -1,6 +1,46 @@
+import random
+
 MAX_LINE = 3        # global var (unchangeable)
 MAX_BET = 100
 MIN_BET = 1
+
+ROWS = 3
+COLS = 3
+
+# dictionary
+symbol_count = {
+    "A" : 2,
+    "B" : 4,
+    "C" : 6,
+    "D" : 8
+}
+
+def get_slotmachine_wheel(rows, cols, symbols):
+    all_symbols = [] # list
+    for symbol, symbol_count in symbols.items():
+        for _ in range(symbol_count):       # _ is an unknown var in python. when you dont care about the number or iteration value, just need to loop through, this could be used
+            all_symbols.append(symbol)
+
+    columns = []
+    for _ in range(cols):
+        column = []
+        current_symbols = all_symbols[:]
+        for _ in range(rows):
+            value = random.choice(current_symbols)
+            current_symbols.remove(value)
+            column.append(value)
+
+        columns.append(column)
+
+    return columns
+
+def print_slotmachine(columns):
+    for row in range(len(columns[0])):
+        for i, column in enumerate(columns):
+            if i != len(columns) - 1:
+                print(column[row], "|")
+            else:
+                print(column[row])
 
 def deposit():
     while True:
@@ -57,5 +97,7 @@ def main():
             break
     print(f"You are betting ${bet} on {lines} lines. Total bet is equal to ${total_bet}.")
 
+    slots = get_slotmachine_wheel(ROWS, COLS, symbol_count)
+    print_slotmachine(slots)
 
 main()
