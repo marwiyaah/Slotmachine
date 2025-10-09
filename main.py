@@ -1,6 +1,6 @@
 import random
 
-MAX_LINE = 3        # global var (unchangeable)
+MAX_LINE = 3        # global var (unchangeable) -> limits how many horizontal lines the player can bet on
 MAX_BET = 100
 MIN_BET = 1
 
@@ -8,6 +8,7 @@ ROWS = 3
 COLS = 3
 
 # dictionary
+# value multiplier -> each item value gets multiplied with the bet value upon winning
 symbol_count = {
     "A" : 2,        # A is there 2 times (symbols : symbol_count)
     "B" : 4,
@@ -22,21 +23,29 @@ symbol_value = {
     "D" : 2
 }
 
+# check each bet line (row) for all equal symbols and compute total winnings and which line
 def check_winnings(columns, lines, bet, values):
     winnings = 0
     winning_lines = []
     for line in range(lines):
-        symbol = columns[0][line]
+        symbol = columns[0][line]       # taking the symbol of the first row's first column to compare the rest of th symbols -> columns[row][column]
+
+        # to check for winning
         for column in columns:
             symbol_to_check = column[line]
+
+            # break if mismatch -> not winning
             if symbol != symbol_to_check:
                 break
+
+        # only executes if the previous loop completed without a break
         else:
             winnings = values[symbol] * bet
             winning_lines.append(line + 1)
-    return winnings, winning_lines
+    return winnings, winning_lines      # return type: int, list[int]
 
 
+# 2D slot wheel
 def get_slotmachine_wheel(rows, cols, symbols):
     all_symbols = [] # list
     for symbol, symbol_count in symbols.items():
@@ -79,6 +88,7 @@ def deposit():
 
     return amount
 
+# input betting line number
 def get_number_of_lines():
     while True:
         lines = input("How many lines you want to put?: (1-" + str(MAX_LINE) + ")?")
@@ -93,6 +103,7 @@ def get_number_of_lines():
 
     return lines
 
+# betting money
 def get_bet():
     while True:
         amount = input("How much would you like to bet on each line?: $" )
@@ -107,11 +118,12 @@ def get_bet():
 
     return amount
 
+# start the slot spin
 def spin(balance):
-    lines = get_number_of_lines()
+    lines = get_number_of_lines()           # save the line number on which the player bet
     while True:
-        bet = get_bet()
-        total_bet = bet * lines
+        bet = get_bet()                     # betting mechanism
+        total_bet = bet * lines             # amount won if wins
 
         if total_bet > balance:
             print(f"You do not have enough balance to play this amount. Current balance is ${balance}")
