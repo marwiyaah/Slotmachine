@@ -15,6 +15,28 @@ symbol_count = {
     "D" : 8
 }
 
+symbol_value = {
+    "A" : 5,
+    "B" : 4,
+    "C" : 3,
+    "D" : 2
+}
+
+def check_winnings(columns, lines, bet, values):
+    winnings = 0
+    winning_lines = []
+    for line in range(lines):
+        symbol = columns[0][line]
+        for column in columns:
+            symbol_to_check = column[line]
+            if symbol != symbol_to_check:
+                break
+        else:
+            winnings = values[symbol] * bet
+            winning_lines.append(line + 1)
+    return winnings, winning_lines
+
+
 def get_slotmachine_wheel(rows, cols, symbols):
     all_symbols = [] # list
     for symbol, symbol_count in symbols.items():
@@ -85,8 +107,7 @@ def get_bet():
 
     return amount
 
-def main():
-    balance = deposit()
+def spin(balance):
     lines = get_number_of_lines()
     while True:
         bet = get_bet()
@@ -100,5 +121,21 @@ def main():
 
     slots = get_slotmachine_wheel(ROWS, COLS, symbol_count)
     print_slotmachine(slots)
+    winnings, winning_lines = check_winnings(slots, lines, bet, symbol_value)
+
+    print(f"You won ${winnings}.")
+    print(f"You won on lines:",*winning_lines)  # *splat/unpack operator = passes every single line from the winning lines list. so if the user wins on line 1 and 2 the print statement will show "You won on line 1,2
+    return winnings - total_bet        # this will tell us how much they won/lost in this game
+
+def main():
+    balance = deposit()
+    while True:
+        print(f"Current balance is ${balance}")
+        answer = input("Press enter to continue... (q to quit) : ")
+        if answer == "q":
+            break
+        balance += spin(balance)
+
+    print(f"You are left with ${balance}.")
 
 main()
